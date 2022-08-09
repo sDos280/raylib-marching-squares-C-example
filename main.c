@@ -1,8 +1,7 @@
 #include "raylib.h"
-#include <stdio.h>
 #include "open-simplex-noise.c"
 
-double remap(double x, double in_min, double in_max, double out_min, double out_max);
+float remap(float x, float in_min, float in_max, float out_min, float out_max);
 int getTileCase(int topleft, int topright, int buttomleft, int buttomright);
 
 int main(void)
@@ -16,7 +15,7 @@ int main(void)
     const float tile_x = (float)screenWidth / (columns - 1);
     const float tile_y = (float)screenHeight / (rows - 1);
 
-    double grid[columns][rows];
+    float grid[columns][rows];
 
     double offset  = 0;
 
@@ -35,7 +34,7 @@ int main(void)
         {
             for (int c = 0; c < columns; c++)
             {
-                grid[c][r] = remap(open_simplex_noise3(ctx, c*0.03, r*0.03, offset), -1, 1, 0, 1); 
+                grid[c][r] = remap((float)open_simplex_noise3(ctx, c*0.03, r*0.03, offset), -1, 1, 0, 1); 
             }
         }
 
@@ -47,17 +46,17 @@ int main(void)
             {
                 for (int c = 0; c < columns - 1; c++)
                 {
-                    int Case = getTileCase(grid[c][r] >= 0.5 ? 1 : 0, grid[c + 1][r] >= 0.5 ? 1 : 0, grid[c][r + 1] >= 0.5 ? 1 : 0, grid[c + 1][r + 1] >= 0.5 ? 1 : 0);
+                    int Case = getTileCase(grid[c][r] >= 0.5f ? 1 : 0, grid[c + 1][r] >= 0.5f ? 1 : 0, grid[c][r + 1] >= 0.5f ? 1 : 0, grid[c + 1][r + 1] >= 0.5f ? 1 : 0);
 
                     Vector2 topleftPoint = (Vector2){c * tile_x, r * tile_y};
                     Vector2 toprightPoint = (Vector2){(c + 1) * tile_x, r * tile_y};
                     Vector2 buttomleftPoint = (Vector2){c * tile_x, (r + 1) * tile_y};
                     Vector2 buttomrightPoint = (Vector2){(c + 1) * tile_x, (r + 1) * tile_y};
 
-                    Vector2 middleUpPoint = (Vector2){(topleftPoint.x + toprightPoint.x) / 2.0, (topleftPoint.y + toprightPoint.y) / 2.0};
-                    Vector2 middleDownPoint = (Vector2){(buttomleftPoint.x + buttomrightPoint.x) / 2.0, (buttomleftPoint.y + buttomrightPoint.y) / 2.0};
-                    Vector2 middleRightPoint = (Vector2){(toprightPoint.x  + buttomrightPoint.x) / 2.0, (toprightPoint.y + buttomrightPoint.y) / 2.0};
-                    Vector2 middleLeftPoint = (Vector2){(topleftPoint.x + buttomleftPoint.x) / 2.0, (topleftPoint.y + buttomleftPoint.y) / 2.0};
+                    Vector2 middleUpPoint = (Vector2){(topleftPoint.x + toprightPoint.x) * 0.5f, (topleftPoint.y + toprightPoint.y) * 0.5f};
+                    Vector2 middleDownPoint = (Vector2){(buttomleftPoint.x + buttomrightPoint.x) * 0.5f, (buttomleftPoint.y + buttomrightPoint.y) * 0.5f};
+                    Vector2 middleRightPoint = (Vector2){(toprightPoint.x  + buttomrightPoint.x) * 0.5f, (toprightPoint.y + buttomrightPoint.y) * 0.5f};
+                    Vector2 middleLeftPoint = (Vector2){(topleftPoint.x + buttomleftPoint.x) * 0.5f, (topleftPoint.y + buttomleftPoint.y) * 0.5f};
 
                     switch (Case)
                     {
@@ -127,6 +126,7 @@ int main(void)
                     }
                 }
             }
+
         DrawFPS(10, 10);
         EndDrawing();
     }
@@ -143,7 +143,7 @@ int getTileCase(int topleft, int topright, int buttomleft, int buttomright)
     return topleft * 8 + topright * 4 + buttomright * 2 + buttomleft;
 }
 
-double remap(double x, double in_min, double in_max, double out_min, double out_max)
+float remap(float x, float in_min, float in_max, float out_min, float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
