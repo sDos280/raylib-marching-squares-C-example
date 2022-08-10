@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "resources\open-simplex-noise.c"
 
+// Function declarations
 float remap(float x, float in_min, float in_max, float out_min, float out_max);
 int getTileCase(int topleft, int topright, int buttomleft, int buttomright);
 
